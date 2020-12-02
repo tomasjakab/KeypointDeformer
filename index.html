@@ -3,8 +3,8 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>K4S-Net</title>
-    <meta name="description" content="Learning Landmarks from Unaligned Data using Image Translation - A method that learns to discover object landmarks without any labelled images">
+    <title>KeypointDeformer: Unsupervised 3D Keypoint Discovery for Shape Control</title>
+    <meta name="description" content="KeypointDeformer: Unsupervised 3D Keypoint Discovery for Shape Control - A novel unsupervised method for shape control through automatically discovered 3D keypoints">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="all,follow">
     <!-- Bootstrap CSS-->
@@ -35,6 +35,12 @@
     <!-- Tweaks for older IEs--><!--[if lt IE 9]>
         <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
         <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script><![endif]-->
+    <style>
+      #demo-container {
+        width: 100%;
+        height: 400px;
+      }
+    </style>
   </head>
   <body>
     <div id="all">
@@ -44,10 +50,19 @@
           <div class="row">
             <div class="col-md-12">
               <div class="heading-light text-center mb-medium">
-                <h1>K4S-Net: Unsupervised 3D Keypoint Discovery for Shape Control</h1>
+                <h1>KeypointDeformer: Unsupervised 3D Keypoint Discovery for Shape Control</h1>
               </div>
               <p class="lead text-md-center">
-                <a href="http://www.robots.ox.ac.uk/~tomj/">Tomas Jakab</a>, <a href="#">Richard Tucker</a>, <a href="#">Ameesh Makadia</a>, <a href="#">Jiajun Wu</a>, <a href="#">Noah Snavely</a>, <a href="#">Angjoo Kanazawa</a>
+                <a href="http://www.robots.ox.ac.uk/~tomj/">Tomas Jakab</a><sup>1,4</sup>,
+                <a href="https://research.google/people/RichardTucker/">Richard Tucker</a><sup>4</sup>,
+                <a href="http://www.ameeshmakadia.com/">Ameesh Makadia</a><sup>4</sup>,
+                <a href="https://jiajunwu.com/">Jiajun Wu</a><sup>3</sup>,
+                <a href="https://www.cs.cornell.edu/~snavely/">Noah Snavely</a><sup>4</sup>,
+                <a href="https://people.eecs.berkeley.edu/~kanazawa/">Angjoo Kanazawa</a><sup>2,4</sup>
+                <br>
+                <sup>1</sup>University of Oxford, <sup>2</sup>UC Berkeley, <sup>3</sup>Stanford University, <sup>4</sup>Google Research
+                <br>
+                In CVPR 2021 (Oral presentation)
               </p>
               
               <p class="lead">
@@ -59,28 +74,21 @@
               </p>
 
               <p class="lead">
-                K4S-Net, a novel unsupervised method for shape control through automatically discovered 3D keypoints.
+                We present  KeypointDeformer, a novel unsupervised method for shape control through automatically discovered 3D keypoints.
                 Our approach produces intuitive and semantically consistent control of shape deformations.
                 Moreover, our discovered 3D keypoints are consistent across object category instances despite large shape variations.
                 Since our method is unsupervised, it can be readily deployed to new object categories without requiring expensive annotations for 3D keypoints and deformations.
               </p>
 
-            </div>
-          </div>
-        </div>
-      </section>
+              <div class="see-more text-center">
+                <p class="buttons">
+                  <a href="#" class="btn btn-template-outlined">Paper</a>
+                  <a href="#section-demo" class="btn btn-template-outlined">Demo</a>
+                  <a href="#" class="btn btn-template-outlined">Code and models</a>
+                  <a href="#section-bibtex" class="btn btn-template-outlined">BibTeX</a>
+                </p>
+              </div>
 
-      <section class="bar bg-white mb-0 padding-small">
-        <div class="container">
-          <div class="row">
-            <div class="col-md-12">
-              <h2>Preprint</h2>
-              <a href="#">
-                <div class="box-image no-mb no-mt">
-                  <img src="img/arxiv.png" alt="arxiv paper" class="img-fluid image1">
-                  <div class="overlay d-flex align-items-center justify-content-center"><span class="btn btn-template-outlined-white"><i class="fa fa-chain"> </i> arXiv Preprint</a></div>
-                </div>
-              </a>
             </div>
           </div>
         </div>
@@ -93,7 +101,7 @@
               <h2>Quick Explanation</h2>
               <div class="mb-medium">
                 <div class="img-fluid embed-responsive embed-responsive-16by9">
-                  <iframe width="560" height="315" src="https://www.youtube.com/embed/NR_1gGmx87Q" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                  <iframe width="560" height="315" src="https://www.youtube.com/embed/GdDX1ZFh1k0" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                 </div>
                 <p class="mb-0"></p>
               </div>
@@ -106,13 +114,53 @@
         <div class="container">
           <div class="row">
             <div class="col-md-12">
+              <h2>Approach</h2>
+              <p class="lead mb-small"> 
+                Our method analyzes the difference between the shapes of the two objects by comparing their latent representations.
+                This latent representation is in the form of 3D keypoints that are learned in an unsupervised way.
+                The difference between the 3D keypoints of the source and the target objects then informs the shape deformation algorithm that deforms the source object into the target object.
+                The whole model is learned end-to-end on this pair-wise shape alignment task and simultaneously discovers 3D keypoints while learning to use them for deforming object shapes.
+              </p>
+              <div class="mb-medium">
+                <img src="img/model_schema.svg" alt="" class="img-fluid image1">
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="bar bg-white mb-0 padding-small">
+        <div class="container">
+          <div class="row">
+            <div class="col-md-12">
               <h2>Automatic Shape Augmentation</h2>
               <div class="mb-medium">
-                <p class="lead mb-small">Our method can also learn categorical shape prior that allows us to automatically sample new augmented shapes.</p>
-                <div class="img-fluid embed-responsive embed-responsive-32by9">
+                <p class="lead mb-small">Our method can also learn a categorical shape prior that allows us to automatically sample new augmented shapes.</p>
+              </div>
+            </div>
+          </div>
+          <div class="row text-center no-space">
+            <div class="col-md-6">
+              <div class="image">
+                <div class="img-fluid embed-responsive embed-responsive-16by9">
                   <video autoplay loop muted inline playsinline id="splash">
-                    <source src="img/pca.mp4" type="video/mp4">
+                    <source src="img/pca-1.mp4" type="video/mp4">
                   </video>
+                </div>
+                <div class="content">
+                  <p>Wing angle change</p>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="image">
+                <div class="img-fluid embed-responsive embed-responsive-16by9">
+                  <video autoplay loop muted inline playsinline id="splash">
+                    <source src="img/pca-2.mp4" type="video/mp4">
+                  </video>
+                </div>
+                <div class="content">
+                  <p>Wing span change</p>
                 </div>
               </div>
             </div>
@@ -126,10 +174,16 @@
             <div class="col-md-12">
               <h2>Unsupervised 3D Keypoints</h2>
               <div class="mb-medium">
-                <p class="lead mb-small">Our unsupervised keypoints that our methods discover are semantically consistent across different instances with largely different shapes.</p>
+                <p class="lead mb-small">The unsupervised keypoints that our method discovers are semantically consistent across different instances with highly varying shapes.</p>
                 <div class="img-fluid embed-responsive embed-responsive-16by7">
                   <video autoplay loop muted inline playsinline id="splash">
                     <source src="img/keypoints.mp4" type="video/mp4">
+                  </video>
+                </div>
+                <p class="lead mb-small">Our method also works on real-world 3D scans of shoes from <a href="https://app.ignitionrobotics.org/GoogleResearch/fuel/collections/Google%20Scanned%20Objects">Google scanned objects</a>.</p>
+                <div class="img-fluid embed-responsive embed-responsive-4by1">
+                  <video autoplay loop muted inline playsinline id="splash">
+                    <source src="img/keypoints-shoes.mp4" type="video/mp4">
                   </video>
                 </div>
               </div>
@@ -156,37 +210,44 @@
         </div>
       </section>
 
-      <section class="bar bg-white mb-0 padding-small">
+      <section class="bar bg-white mb-0 padding-small" id="section-demo">
         <div class="container">
           <div class="row">
             <div class="col-md-12">
-              <h2>Approach</h2>
-              <p class="lead mb-small"> 
-                Our method analyzes the difference between the shapes of the two objects by comparing their latent representations.
-                This latent representation is learned in an unsupervised way and encouraged to be keypoint-like.
-                The difference between the keypoint-like latent representations then informs the shape deformation algorithm that deforms the source object into the target object.
-                The whole model is learned end-to-end on pair-wise shape alignment task and simultaneously discovers 3D keypoints while learning to use them for deforming object shapes.
-              </p>
+              <h2>Interactive Demo</h2>
               <div class="mb-medium">
-                <img src="img/model-compressed.png" alt="" class="img-fluid image1">
+                <p class="lead mb-small">Drag keypoints to deform the shape. Dragging is not supported on mobile devices.</p>
+              </div>
+              <div class="mb-medium">
+                <div id="demo-container" data-obj="data/demo/source_mesh.obj" data-cage="data/demo/cage.txt" data-kpts="data/demo/source_keypoints.txt" data-weights="data/demo/weights.txt" data-influence="data/demo/influence.txt" data-vertices="data/demo/source_vertices.txt" data-faces="data/demo/source_faces.txt"></div>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-
       <section class="bar bg-white mb-0 padding-small">
         <div class="container">
           <div class="row">
             <div class="col-md-12">
-              <h2>Preprint</h2>
+              <h2 class="no-mb">Paper</h2>
               <a href="#">
-                <div class="box-image no-mb no-mt">
-                  <img src="img/arxiv.png" alt="arxiv paper" class="img-fluid image1">
+                <div class="box-image no-mt">
+                  <img src="img/paper_montage.png" alt="paper thumbnail" class="img-fluid image1">
                   <div class="overlay d-flex align-items-center justify-content-center"><span class="btn btn-template-outlined-white"><i class="fa fa-chain"> </i> arXiv Preprint</a></div>
                 </div>
               </a>
+            </div>
+            <div class="col-md-12">
+              <h3 id="section-bibtex">BibTeX</h2>
+<pre>
+@inproceedings{jakab2021keypointdeformer,
+  title={KeypointDeformer: Unsupervised 3D Keypoint Discovery for Shape Control},
+  author={Jakab, Tomas and Tucker, Richard and Makadia, Ameesh and Wu, Jiajun and Snavely, Noah and Kanazawa, Angjoo},
+  booktitle={Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition},
+  year={2020}
+}
+</pre>
             </div>
           </div>
         </div>
@@ -201,7 +262,7 @@
           <div class="container">
             <div class="row">
               <div class="col-lg-4 text-center-md">
-                <p>&copy; 2020. Tomas Jakab</p>
+                <p>&copy; 2021. Tomas Jakab</p>
               </div>
               <div class="col-lg-8 text-right text-center-md">
                 <p>Template design by <a href="https://bootstrapious.com/free-templates">Bootstrapious Templates </a></p>
@@ -225,18 +286,7 @@
     <script src="vendor/bootstrap-select/js/bootstrap-select.min.js"></script>
     <script src="vendor/jquery.scrollto/jquery.scrollTo.min.js"></script>
     <script src="js/front.js"></script>
-    
-    <script>
-      var video = document.getElementById("splash");
-
-      $('#splash').hover(function toggleControls() {
-          if (video.hasAttribute("controls")) {
-              video.removeAttribute("controls")
-          } else {
-              video.setAttribute("controls", "controls")
-          }
-      })
-    </script>
-
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.4.0/dist/tf.min.js"></script>
+    <script src="js/demo.js" type="module"></script>
   </body>
 </html>
