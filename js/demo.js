@@ -61,7 +61,7 @@ function main() {
     // let scale = 1.2;
     // // // let [x, y, z] = [0.5 * scale, 2.5 * scale, 1.25 * scale];
     // let cameraPosition = [0.5 * scale, 2.5 * scale, 0 * scale];
-    let scale = 0.6;
+    let scale = 0.7;
     let cameraPosition = [1.7, 3, 2.25].map(x => x * scale);
     // dualSDF
     // let cameraPosition = [1.7229492652657825, 1.4053401980124738, 2.120920557927234];
@@ -330,7 +330,6 @@ function main() {
 
     function onClick( event ) {
         if ( enableSelection === true ) {
-            // keypointsMeshes.forEach(x => group.attach(x))
             mouse.x = ( event.clientX / container.clientWidth ) * 2 - 1;
             mouse.y = - ( event.clientY / container.clientHeight ) * 2 + 1;
 
@@ -356,57 +355,6 @@ function main() {
             }
         }
     }
-
-    // function onClick( event ) {
-
-    //     event.preventDefault();
-
-    //     if ( enableSelection === true ) {
-
-    //         const draggableObjects = dragcontrols.getObjects();
-    //         draggableObjects.length = 0;
-
-    //         // container.clientWidth, container.clientHeight
-    //         mouse.x = ( event.clientX / container.clientWidth ) * 2 - 1;
-    //         mouse.y = - ( event.clientY / container.clientHeight ) * 2 + 1;
-
-    //         raycaster.setFromCamera( mouse, camera );
-            
-    //         const intersections = raycaster.intersectObjects( keypointsMeshes, true );
-
-    //         if ( intersections.length > 0 ) {
-
-    //             const object = intersections[ 0 ].object;
-
-    //             if ( group.children.includes( object ) === true ) {
-
-    //                 object.material.emissive.set( 0x000000 );
-    //                 scene.attach( object );
-
-    //             } else {
-
-    //                 object.material.emissive.set( 0xaaaaaa );
-    //                 group.attach( object );
-
-    //             }
-
-    //             dragcontrols.transformGroup = true;
-    //             draggableObjects.push( group );
-
-    //         }
-
-    //         if ( group.children.length === 0 ) {
-
-    //             dragcontrols.transformGroup = false;
-    //             draggableObjects.push( ...keypointsMeshes );
-
-    //         }
-
-    //     }
-
-    //     render();
-
-    // }
 
     
     function addPoint(scene, position, keypointsMeshes=null, name=null) {
@@ -454,25 +402,6 @@ function main() {
             onLoadFn(text);
         });
     }
-    
-
-    function fetchJSON(url, onLoadFn) {
-        fetch(url).then(response => {
-            return response.json()
-        }).then(json => {
-            onLoadFn(json);
-        });
-    }
-    
-
-    function fetchBlob(url, onLoadFn) {
-        fetch(url).then(response => {
-            return response.blob()
-        }).then(blob => {
-            var objectURL = URL.createObjectURL(blob);
-            onLoadFn(objectURL);
-        });
-    }
 
 
     function loadKeypoints(string, scene, keypointsMeshes=null) {
@@ -513,76 +442,11 @@ function main() {
     }
 
 
-    function updateKeypoints(string, keypointsMeshes) {
-        var keypoints = parseKeypoints(string);
-        keypointsMeshes.forEach((mesh, i) => {
-            let {name, position} = keypoints[i];
-            mesh.position.copy(position);
-        });
-    }
-
     function getOBJMaterial() {
         var material = new THREE.MeshPhongMaterial({
             color: OBJColor, flatShading: true, dithering: true, opacity: OBJOpacity, transparent: true})
         return material
     }
-
-    function loadOBJ(url, fn) {
-        var loader = new OBJLoader();
-        loader.load(url, onLoad);
-        
-        function onLoad(object) {
-            var material = getOBJMaterial();
-
-            object.traverse(function(child) {
-                if (child instanceof THREE.Mesh) {
-                    child.material = material;
-                    child.castShadow = true;
-                    child.geometry = new THREE.Geometry().fromBufferGeometry(child.geometry);
-                    // child.geometry.mergeVertices();
-                }
-            });
-
-            // setSmoothGeometry(object);
-
-            // merge
-            var mesh = object.children[0];
-            // mesh.geometry = new THREE.Geometry().fromBufferGeometry(mesh.geometry);
-                
-            // // add wireframe
-            // var geo = new THREE.EdgesGeometry(mesh.geometry); // or WireframeGeometry
-            // var mat = new THREE.LineBasicMaterial({color: 0xffffff, linewidth: 2});
-            // var wireframe = new THREE.LineSegments(geo, mat);
-            // mesh.add(wireframe);
-            
-            fn(mesh);
-        }
-    }
-
-
-    function loadPLY(url, fn) {
-        var loader = new PLYLoader();
-        loader.load(url, onLoad);
-        
-        function onLoad(geometry) {
-            geometry.computeVertexNormals();
-            var material = new THREE.MeshStandardMaterial({
-                color: 0x0055ff, opacity: 0.1, transparent: true});
-            // var material = new THREE.MeshPhongMaterial({
-            //     color: 0x0055ff, side: THREE.DoubleSide, 
-            //     flatShading: false, shininess: 100,  opacity: 0.05, transparent: true});
-            var mesh = new THREE.Mesh( geometry, material );
-            
-            // add wireframe
-            var geo = new THREE.EdgesGeometry(mesh.geometry); // or WireframeGeometry
-            var mat = new THREE.LineBasicMaterial({color: 0x000000, linewidth: 2});
-            var wireframe = new THREE.LineSegments(geo, mat);
-            mesh.add(wireframe);
-            
-            fn(wireframe);
-        }
-    }
-
 
     function onWindowResize() {
         camera.aspect = container.clientWidth / container.clientHeight;
@@ -603,19 +467,6 @@ function main() {
         renderer.render(scene, camera);
     }
 
-
-    function keypointsToURL(keypointsMeshes) {
-        var coordinates = [];
-        for (const mesh of keypointsMeshes) {
-            let position = new THREE.Vector3()
-            mesh.getWorldPosition(position);
-            // let position = mesh.position;
-            var coordinate = position.x + ',' + position.y + ',' + position.z;
-            coordinates.push(coordinate);
-        }
-        return coordinates.join(';');
-    }
-
     function keypointsMeshesToMatrix(keypointsMeshes) {
         var coordinates = [];
         for (const mesh of keypointsMeshes) {
@@ -624,6 +475,12 @@ function main() {
             coordinates.push([position.x, position.y, position.z]);
         }
         return coordinates;
+    }
+
+    function matrixToKeypointsMeshes(matrix) {
+        tf.unstack(matrix).forEach(function(v, i) {
+            keypointsMeshes[i].position.set(... v.dataSync());
+        });
     }
 
     function fetchMeshTransform() {
@@ -637,25 +494,6 @@ function main() {
             object_mesh.children[0].geometry.vertices[i].set(... v.dataSync());
         });
         object_mesh.children[0].geometry.verticesNeedUpdate = true;
-        
-        // ws.send(JSON.stringify({action: 'deform', keypoints: prevKeypointsURL + '+' + keypointsURL}));
-        
-        // fetchJSON('?' + prevKeypointsURL + '+' + keypointsURL, json => {
-        //     fetchText(json.target_keypoints, text => {
-        //         updateKeypoints(text, keypointsMeshes);
-        //     });
-        //     loadOBJ(json.deformed_mesh, mesh => {
-        //         // object_mesh.children[0].geometry.attributes.position = mesh.geometry.attributes.position
-        //         // Workaround of webgl error:
-        //         object_mesh.remove(object_mesh.children[0]);
-        //         object_mesh.add(mesh);
-        //         render();
-        //     });
-        //     // loadPLY(json.deformed_cage, mesh => {
-        //     //     cage.remove(cage.children[0]);
-        //     //     cage.add(mesh);
-        //     // });
-        // });
     }
 
     function loadVerticesFacesMesh(vertices, faces) {
@@ -670,95 +508,56 @@ function main() {
         return mesh
     }
 
-    // ws.addEventListener('message', function(m) {
-    //     var message = JSON.parse(m.data);
-    //     // console.log('[ws:onmessage] Received new vertices!: ' + message.vertices);
-    //     console.log(message.action);
-    //     if (message.action == 'load') {
-    //         var mesh = loadVerticesFacesMesh(message.vertices, message.faces)
-    //         object_mesh.add(mesh);
-    //     } else if (message.action == 'deform') {
-    //         updateKeypoints(message.keypoints, keypointsMeshes);
-            
-    //         message.vertices.forEach(function(v, i) {
-    //             object_mesh.children[0].geometry.vertices[i].set(... v);
-    //         });
-    //         object_mesh.children[0].geometry.verticesNeedUpdate = true;
+    function resetCamera() {
+        camera.position.set(... cameraPosition);
+        camera.lookAt(0, 0, 0);
+    }
 
-    //         // vertices.forEach(x => object_mesh.children[0].geometry.vertices.push(new THREE.Vector3(... x)));
-    //         // var mesh = loadVerticesFacesMesh(message.vertices, message.faces)
+    function resetKeypoints() {
+        matrixToKeypointsMeshes(sourceKeypoints);
+    }
 
-    //         // object_mesh.remove(object_mesh.children[0]);
-    //         // object_mesh.add(mesh);
-    //     }
-    //     // message.vertices.forEach(function(v, i) {
-    //     //     object_mesh.children[0].geometry.vertices[i].set(... v);
-    //     // });
-    //     // var position = [];
-    //     // for (const vertices of message.vertices) {
-    //     //     position.push(parseFloat(vertices[0]));
-    //     //     position.push(parseFloat(vertices[1]));
-    //     //     position.push(parseFloat(vertices[2]));
-    //     // }
-    //     // object_mesh.children[0].geometry.setAttribute('position', new THREE.Float32BufferAttribute(position, 3));
-    //     // vertices.forEach(function(v, i) {
-    //     //   mainObject.geometry.vertices[i].set(v.x, v.y, v.z);
-    //     //   handlerObjects[i].position.set(v.x, v.y, v.z);
-    //     // });
-    //     // mainObject.geometry.verticesNeedUpdate = true;
-    //   });
+    function loadExample(elem) {
+        keypointsMeshes.forEach((m) => {
+            scene.remove(m);
+        });
+        keypointsMeshes.length = 0;
+        object_mesh.remove(... object_mesh.children);
 
-    // run 
-    var elem = document.querySelector('#demo-container')
-    // loadOBJ(elem.dataset.obj, mesh => {
-    //     object_mesh.add(mesh)
-    //     if (elem.dataset.hasOwnProperty('ply')) {
-    //         // loadPLY(elem.dataset.ply, mesh => cage.add(mesh));
-    //     }
-    // });
-    // ws.onopen = function() {
-    //     ws.send(JSON.stringify({action: 'load'}));
-    // };
-    
-    if (elem.dataset.hasOwnProperty('kpts')) {
         fetchText(elem.dataset.kpts, text => {
             var keypoints = loadKeypoints(text, scene, keypointsMeshes=keypointsMeshes);
             sourceKeypoints = tf.tensor(keypoints.map(x => [x.position.x, x.position.y, x.position.z]));
         });
-    }
 
-    if (elem.dataset.hasOwnProperty('weights')) {
         fetchText(elem.dataset.weights, text => {
             weights = tf.tensor(parseTXTMatrix(text));
         });
-    }
 
-    if (elem.dataset.hasOwnProperty('influence')) {
         fetchText(elem.dataset.influence, text => {
             influence = tf.tensor(parseTXTMatrix(text));
         });
-    }
 
-    if (elem.dataset.hasOwnProperty('cage')) {
         fetchText(elem.dataset.cage, text => {
             cageVertices = tf.tensor(parseTXTMatrix(text));
         });
-    }
 
-    if (elem.dataset.hasOwnProperty('vertices')) {
         fetchText(elem.dataset.vertices, text => {
-            // vertices = tf.tensor(parseTXTMatrix(text));
             vertices = parseTXTMatrix(text);
             fetchText(elem.dataset.faces, text => {
-                // faces = tf.tensor(parseTXTMatrix(text));
                 faces = parseTXTMatrix(text);
                 var mesh = loadVerticesFacesMesh(vertices, faces);
                 object_mesh.add(mesh);
             });
         });
     }
+        
+    // run 
+    let examples = [];
+    document.querySelectorAll('.demo-data').forEach((elem) => {
+        examples.push(elem);
+    });
+    loadExample(examples[0]);
 
-    
 
     function addSpotLightGUI(gui, spotLight) {
         var params = {
@@ -876,56 +675,73 @@ function main() {
         opacity: OBJOpacity,
         orbitControl: true,
         screenshot: function () {hideTransformNow(); saveAsImage(renderer);},
-        // cameraX: camera.position.x,
         resetCamera: function () {
-            // camera.position.set(x, y, z);
-            camera.position.set(... cameraPosition);
-            camera.lookAt(0, 0, 0);
-            // camera.rotation.set(... cameraRotation);
+            resetCamera();
+        },
+        reset: function () {
+            resetCamera();
+            resetKeypoints();
+            fetchMeshTransform();
+        },
+        airplane: function () {
+            resetCamera();
+            loadExample(examples[0]);
+        },
+        chair: function () {
+            resetCamera();
+            loadExample(examples[1]);
+        },
+        shoe: function () {
+            resetCamera();
+            loadExample(examples[2]);
         }
         
     };
 
     var gui = new GUI();
-    gui.add( params, 'screenshot' );
-    gui.add( params, 'resetCamera' );
-    gui.add( params, 'orbitControl' ).onChange( function ( val ) {
-        controls.enableZoom = val;
-        controls.enablePan = val;
-        controls.enableRotate = val;
-    } );
-    // gui.add( params, 'cameraX', -3, 3).listen();
-    // gui.add( params, 'cameraX', -3, 3 ).onChange( function ( val ) {
-    //     camera.position.x = val;
+    gui.add( params, 'airplane' );
+    gui.add( params, 'chair' );
+    gui.add( params, 'shoe' );
+    gui.add( params, 'reset' );
+    // gui.add( params, 'screenshot' );
+    // gui.add( params, 'resetCamera' );
+    // gui.add( params, 'orbitControl' ).onChange( function ( val ) {
+    //     controls.enableZoom = val;
+    //     controls.enablePan = val;
+    //     controls.enableRotate = val;
+    // } );
+    // // gui.add( params, 'cameraX', -3, 3).listen();
+    // // gui.add( params, 'cameraX', -3, 3 ).onChange( function ( val ) {
+    // //     camera.position.x = val;
+    // //     render();
+    // // } );
+    // gui.addColor( params, 'color' ).onChange( function ( val ) {
+    //     object_mesh.traverse(child => {
+    //         if (child instanceof THREE.Mesh) {
+    //             child.material.color.setHex( val );
+    //         }
+    //     });
     //     render();
     // } );
-    gui.addColor( params, 'color' ).onChange( function ( val ) {
-        object_mesh.traverse(child => {
-            if (child instanceof THREE.Mesh) {
-                child.material.color.setHex( val );
-            }
-        });
-        render();
-    } );
-    gui.add( params, 'opacity', 0, 1 ).onChange( function ( val ) {
-        object_mesh.traverse(child => {
-            if (child instanceof THREE.Mesh) {
-                child.material.opacity = val;
-            }
-        });
-        render();
-    } );
+    // gui.add( params, 'opacity', 0, 1 ).onChange( function ( val ) {
+    //     object_mesh.traverse(child => {
+    //         if (child instanceof THREE.Mesh) {
+    //             child.material.opacity = val;
+    //         }
+    //     });
+    //     render();
+    // } );
     
-    var folder = gui.addFolder('spotLight');
-    addSpotLightGUI(folder, spotLight);
-    var folder = gui.addFolder('spotLight2');
-    addSpotLightGUI(folder, spotLight2);
+    // var folder = gui.addFolder('spotLight');
+    // addSpotLightGUI(folder, spotLight);
+    // var folder = gui.addFolder('spotLight2');
+    // addSpotLightGUI(folder, spotLight2);
     
-    var folder = gui.addFolder('hemisphereLight');
-    addHemisphereLightGUI(folder, hemisphereLight);
+    // var folder = gui.addFolder('hemisphereLight');
+    // addHemisphereLightGUI(folder, hemisphereLight);
 
-    var folder = gui.addFolder('ambientLight');
-    addAmbientLightGUI(folder, ambientLight);
+    // var folder = gui.addFolder('ambientLight');
+    // addAmbientLightGUI(folder, ambientLight);
 
     gui.open();
 
@@ -962,13 +778,6 @@ function hashString(str) {
     return hash >>> 0;
 }
 
-function sphericalToCart(r, azimuth, elevation) {
-    // inputs in degrees
-    var x = r * Math.sin(elevation * Math.PI / 180) * Math.sin(azimuth * Math.PI / 180);
-    var y = r * Math.sin(elevation * Math.PI / 180) * Math.cos(azimuth * Math.PI / 180);
-    var z = r * Math.cos(elevation * Math.PI / 180);
-    return {x, y, z};
-}
 
 function saveAsImage(renderer) {
     var imgData;
@@ -998,17 +807,6 @@ var saveFile = function (strData, filename) {
     } else {
         location.replace(uri);
     }
-}
-
-function setSmoothGeometry(obj) {
-    obj.traverse(node => {
-        if ('geometry' in node) {
-            const tempGeometry = new THREE.Geometry().fromBufferGeometry( node.geometry );
-            tempGeometry.mergeVertices();
-            tempGeometry.computeVertexNormals(true);
-            node.geometry = new THREE.BufferGeometry().fromGeometry( tempGeometry );
-        }
-    })
 }
 
 main();
