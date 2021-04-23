@@ -391,7 +391,7 @@ function main() {
     
 
     function fetchText(url, onLoadFn) {
-        fetch(url).then(response => {
+        return fetch(url).then(response => {
             return response.text()
         }).then(text => {
             onLoadFn(text);
@@ -517,28 +517,43 @@ function main() {
     }
 
     function loadExample(elem) {
+        document.getElementById("message").innerHTML = "Loading...";
+
         keypointsMeshes.forEach((m) => {
             scene.remove(m);
         });
         keypointsMeshes.length = 0;
         object_mesh.remove(... object_mesh.children);
-
-        fetchText(elem.dataset.kpts, text => {
-            var keypoints = loadKeypoints(text, scene, keypointsMeshes=keypointsMeshes);
-            sourceKeypoints = tf.tensor(keypoints.map(x => [x.position.x, x.position.y, x.position.z]));
-        });
-
-        fetchText(elem.dataset.weights, text => {
-            weights = tf.tensor(parseTXTMatrix(text));
-        });
-
-        fetchText(elem.dataset.influence, text => {
-            influence = tf.tensor(parseTXTMatrix(text));
-        });
-
-        fetchText(elem.dataset.cage, text => {
-            cageVertices = tf.tensor(parseTXTMatrix(text));
-        });
+        
+        // fetchText(elem.dataset.vertices, text => {
+        //     vertices = parseTXTMatrix(text);
+        //     fetchText(elem.dataset.faces, text => {
+        //         faces = parseTXTMatrix(text);
+        //         var mesh = loadVerticesFacesMesh(vertices, faces);
+        //         object_mesh.add(mesh);
+        //     });
+        // }).then(
+        //     fetchText(elem.dataset.weights, text => {
+        //         weights = tf.tensor(parseTXTMatrix(text));
+        //     }).then(
+        //         fetchText(elem.dataset.weights, text => {
+        //             weights = tf.tensor(parseTXTMatrix(text));
+        //         }).then(
+        //             fetchText(elem.dataset.influence, text => {
+        //                 influence = tf.tensor(parseTXTMatrix(text));
+        //             }).then(
+        //                 fetchText(elem.dataset.cage, text => {
+        //                     cageVertices = tf.tensor(parseTXTMatrix(text));
+        //                 }).then(
+        //                     fetchText(elem.dataset.kpts, text => {
+        //                         var keypoints = loadKeypoints(text, scene, keypointsMeshes=keypointsMeshes);
+        //                         sourceKeypoints = tf.tensor(keypoints.map(x => [x.position.x, x.position.y, x.position.z]));
+        //                     })
+        //                 )
+        //             )
+        //         )
+        //     ));
+            
 
         fetchText(elem.dataset.vertices, text => {
             vertices = parseTXTMatrix(text);
@@ -546,6 +561,25 @@ function main() {
                 faces = parseTXTMatrix(text);
                 var mesh = loadVerticesFacesMesh(vertices, faces);
                 object_mesh.add(mesh);
+
+                fetchText(elem.dataset.weights, text => {
+                    weights = tf.tensor(parseTXTMatrix(text));
+
+                    fetchText(elem.dataset.influence, text => {
+                        influence = tf.tensor(parseTXTMatrix(text));
+
+                        fetchText(elem.dataset.cage, text => {
+                            cageVertices = tf.tensor(parseTXTMatrix(text));
+
+                            fetchText(elem.dataset.kpts, text => {
+                                var keypoints = loadKeypoints(text, scene, keypointsMeshes=keypointsMeshes);
+                                sourceKeypoints = tf.tensor(keypoints.map(x => [x.position.x, x.position.y, x.position.z]));
+
+                                document.getElementById("message").innerHTML = "";
+                            });
+                        });
+                    });
+                });
             });
         });
     }
@@ -683,16 +717,22 @@ function main() {
             fetchMeshTransform();
         },
         airplane: function () {
+            if (document.getElementById("message").innerHTML.length > 0)
+                return; 
             camera.position.set(... cameraPositionAirplane);
             camera.lookAt(0, 0, 0);
             loadExample(examples[0]);
         },
         chair: function () {
+            if (document.getElementById("message").innerHTML.length > 0)
+                return; 
             camera.position.set(... cameraPositionChair);
             camera.lookAt(0, 0, 0);
             loadExample(examples[1]);
         },
         shoe: function () {
+            if (document.getElementById("message").innerHTML.length > 0)
+                return; 
             camera.position.set(... cameraPositionShoe);
             camera.lookAt(0, 0, 0);
             loadExample(examples[2]);
