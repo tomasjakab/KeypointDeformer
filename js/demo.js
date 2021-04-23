@@ -492,7 +492,7 @@ function main() {
             });
             object_mesh.children[0].geometry.verticesNeedUpdate = true;
             document.getElementById("message").innerHTML = "";
-        }, 1000);
+        }, 100);
     }
 
     function loadVerticesFacesMesh(vertices, faces) {
