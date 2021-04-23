@@ -61,7 +61,7 @@ function main() {
     // let scale = 1.2;
     // // // let [x, y, z] = [0.5 * scale, 2.5 * scale, 1.25 * scale];
     // let cameraPosition = [0.5 * scale, 2.5 * scale, 0 * scale];
-    let scale = 0.5;
+    let scale = 0.6;
     let cameraPosition = [1.7, 3, 2.25].map(x => x * scale);
     // dualSDF
     // let cameraPosition = [1.7229492652657825, 1.4053401980124738, 2.120920557927234];
@@ -886,48 +886,48 @@ function main() {
         
     };
 
-    // var gui = new GUI();
-    // gui.add( params, 'screenshot' );
-    // gui.add( params, 'resetCamera' );
-    // gui.add( params, 'orbitControl' ).onChange( function ( val ) {
-    //     controls.enableZoom = val;
-    //     controls.enablePan = val;
-    //     controls.enableRotate = val;
-    // } );
-    // // gui.add( params, 'cameraX', -3, 3).listen();
-    // // gui.add( params, 'cameraX', -3, 3 ).onChange( function ( val ) {
-    // //     camera.position.x = val;
-    // //     render();
-    // // } );
-    // gui.addColor( params, 'color' ).onChange( function ( val ) {
-    //     object_mesh.traverse(child => {
-    //         if (child instanceof THREE.Mesh) {
-    //             child.material.color.setHex( val );
-    //         }
-    //     });
+    var gui = new GUI();
+    gui.add( params, 'screenshot' );
+    gui.add( params, 'resetCamera' );
+    gui.add( params, 'orbitControl' ).onChange( function ( val ) {
+        controls.enableZoom = val;
+        controls.enablePan = val;
+        controls.enableRotate = val;
+    } );
+    // gui.add( params, 'cameraX', -3, 3).listen();
+    // gui.add( params, 'cameraX', -3, 3 ).onChange( function ( val ) {
+    //     camera.position.x = val;
     //     render();
     // } );
-    // gui.add( params, 'opacity', 0, 1 ).onChange( function ( val ) {
-    //     object_mesh.traverse(child => {
-    //         if (child instanceof THREE.Mesh) {
-    //             child.material.opacity = val;
-    //         }
-    //     });
-    //     render();
-    // } );
+    gui.addColor( params, 'color' ).onChange( function ( val ) {
+        object_mesh.traverse(child => {
+            if (child instanceof THREE.Mesh) {
+                child.material.color.setHex( val );
+            }
+        });
+        render();
+    } );
+    gui.add( params, 'opacity', 0, 1 ).onChange( function ( val ) {
+        object_mesh.traverse(child => {
+            if (child instanceof THREE.Mesh) {
+                child.material.opacity = val;
+            }
+        });
+        render();
+    } );
     
-    // var folder = gui.addFolder('spotLight');
-    // addSpotLightGUI(folder, spotLight);
-    // var folder = gui.addFolder('spotLight2');
-    // addSpotLightGUI(folder, spotLight2);
+    var folder = gui.addFolder('spotLight');
+    addSpotLightGUI(folder, spotLight);
+    var folder = gui.addFolder('spotLight2');
+    addSpotLightGUI(folder, spotLight2);
     
-    // var folder = gui.addFolder('hemisphereLight');
-    // addHemisphereLightGUI(folder, hemisphereLight);
+    var folder = gui.addFolder('hemisphereLight');
+    addHemisphereLightGUI(folder, hemisphereLight);
 
-    // var folder = gui.addFolder('ambientLight');
-    // addAmbientLightGUI(folder, ambientLight);
+    var folder = gui.addFolder('ambientLight');
+    addAmbientLightGUI(folder, ambientLight);
 
-    // gui.open();
+    gui.open();
 
     onWindowResize();
     animate();
