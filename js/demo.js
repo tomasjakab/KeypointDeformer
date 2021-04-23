@@ -48,11 +48,12 @@ function main() {
     const near = 0.01;
     const far = 100;
     const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
+    let scale;
     // let {x, y, z} = sphericalToCart(3, 0, 0)
     // chair
     // let [x, y, z] = [1.7, 3, 2.25].map(x => x * scale);
-    // let scale = 1.2;
-    // let cameraPosition = [1.94515847577463, 0.772487180981709, 2.2497691693169424].map(x => x * scale);
+    scale = 1.2;
+    let cameraPositionChair = [1.94515847577463, 0.772487180981709, 2.2497691693169424].map(x => x * scale);
     // let cameraRotation = [-0.3912286234799624, 0.5366379005261677, 0.20784082348737504];
     let cameraLookAt = [0, 0, 0];
     // let cameraLookAt = [-0.5112493893594757,-0.32772262668803287,-0.7944947714341858];
@@ -61,13 +62,17 @@ function main() {
     // let scale = 1.2;
     // // // let [x, y, z] = [0.5 * scale, 2.5 * scale, 1.25 * scale];
     // let cameraPosition = [0.5 * scale, 2.5 * scale, 0 * scale];
-    let scale = 0.7;
-    let cameraPosition = [1.7, 3, 2.25].map(x => x * scale);
+    scale = 0.7;
+    let cameraPositionAirplane = [1.7, 3, 2.25].map(x => x * scale);
     // dualSDF
     // let cameraPosition = [1.7229492652657825, 1.4053401980124738, 2.120920557927234];
     // let scale = 0.7;
     // let cameraPosition = [1.3518370604886951, 1.821583023756495, 2.072730350363848].map(x => x * scale);
 
+    scale = 0.95;
+    let cameraPositionShoe = [-2.632886037151505, 1.5, 0.2].map(x => x * scale);
+
+    let cameraPosition = cameraPositionAirplane
     camera.position.set(... cameraPosition);
     // camera.rotation.set(... cameraRotation);
     // camera.position.set(0, 2.5, 2.5);
@@ -684,15 +689,18 @@ function main() {
             fetchMeshTransform();
         },
         airplane: function () {
-            resetCamera();
+            camera.position.set(... cameraPositionAirplane);
+            camera.lookAt(0, 0, 0);
             loadExample(examples[0]);
         },
         chair: function () {
-            resetCamera();
+            camera.position.set(... cameraPositionChair);
+            camera.lookAt(0, 0, 0);
             loadExample(examples[1]);
         },
         shoe: function () {
-            resetCamera();
+            camera.position.set(... cameraPositionShoe);
+            camera.lookAt(0, 0, 0);
             loadExample(examples[2]);
         }
         
@@ -702,7 +710,7 @@ function main() {
     gui.add( params, 'airplane' );
     gui.add( params, 'chair' );
     gui.add( params, 'shoe' );
-    gui.add( params, 'reset' );
+    // gui.add( params, 'reset' );
     // gui.add( params, 'screenshot' );
     // gui.add( params, 'resetCamera' );
     // gui.add( params, 'orbitControl' ).onChange( function ( val ) {
