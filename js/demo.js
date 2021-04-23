@@ -7,17 +7,7 @@ import { GUI } from 'https://unpkg.com/three@0.118.3/examples/jsm/libs/dat.gui.m
 import { OrbitControls } from 'https://unpkg.com/three@0.118.3/examples/jsm/controls/OrbitControls.js';
 import { TransformControls } from 'https://unpkg.com/three@0.118.3/examples/jsm/controls/TransformControls.js';
 import { DragControls } from 'https://unpkg.com/three@0.118.3/examples/jsm/controls/DragControls.js';
-import { OBJLoader } from 'https://unpkg.com/three@0.118.3/examples/jsm/loaders/OBJLoader.js';
-import { PLYLoader } from 'https://unpkg.com/three@0.118.3/examples/jsm/loaders/PLYLoader.js';
 
-// import * as tf from 'https://unpkg.com/@tensorflow/tfjs-core@3.4.0';
-// import * as tf from 'https://unpkg.com/@tensorflow/tfjs';
-// import 'https://unpkg.com/@tensorflow/tfjs-backend-cpu@3.4.0';
-// import 'https://unpkg.com/@tensorflow/tfjs-core@3.4.0';
-
-// const a = tf.tensor([1,2,3,4]);
-// a.print()
-// console.log(a.print());
 
 function main() {
     // const OBJColor = 0x2194CE;
@@ -489,16 +479,20 @@ function main() {
     }
 
     function fetchMeshTransform() {
-        var targetKeypoints = keypointsMeshesToMatrix(keypointsMeshes);
-        var keypointsOffset = tf.sub(targetKeypoints, sourceKeypoints);
-        var cageOffset = tf.sum(tf.mul(keypointsOffset.expandDims(1), influence.expandDims(-1)), 0);
-        var newCageVertices = tf.add(cageVertices, cageOffset);
-        var newVertices = tf.sum(tf.mul(newCageVertices.expandDims(0), weights.expandDims(-1)), 1);
-
-        tf.unstack(newVertices).forEach(function(v, i) {
-            object_mesh.children[0].geometry.vertices[i].set(... v.dataSync());
-        });
-        object_mesh.children[0].geometry.verticesNeedUpdate = true;
+        document.getElementById("message").innerHTML = "Computing...";
+        setTimeout(() => {
+            var targetKeypoints = keypointsMeshesToMatrix(keypointsMeshes);
+            var keypointsOffset = tf.sub(targetKeypoints, sourceKeypoints);
+            var cageOffset = tf.sum(tf.mul(keypointsOffset.expandDims(1), influence.expandDims(-1)), 0);
+            var newCageVertices = tf.add(cageVertices, cageOffset);
+            var newVertices = tf.sum(tf.mul(newCageVertices.expandDims(0), weights.expandDims(-1)), 1);
+            
+            tf.unstack(newVertices).forEach(function(v, i) {
+                object_mesh.children[0].geometry.vertices[i].set(... v.dataSync());
+            });
+            object_mesh.children[0].geometry.verticesNeedUpdate = true;
+            document.getElementById("message").innerHTML = "";
+        }, 1000);
     }
 
     function loadVerticesFacesMesh(vertices, faces) {
