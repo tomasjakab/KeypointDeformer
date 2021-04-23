@@ -52,7 +52,7 @@ function main() {
     // let {x, y, z} = sphericalToCart(3, 0, 0)
     // chair
     // let [x, y, z] = [1.7, 3, 2.25].map(x => x * scale);
-    scale = 1.2;
+    scale = 1.1;
     let cameraPositionChair = [1.94515847577463, 0.772487180981709, 2.2497691693169424].map(x => x * scale);
     // let cameraRotation = [-0.3912286234799624, 0.5366379005261677, 0.20784082348737504];
     let cameraLookAt = [0, 0, 0];
@@ -62,15 +62,15 @@ function main() {
     // let scale = 1.2;
     // // // let [x, y, z] = [0.5 * scale, 2.5 * scale, 1.25 * scale];
     // let cameraPosition = [0.5 * scale, 2.5 * scale, 0 * scale];
-    scale = 0.7;
+    scale = 0.6;
     let cameraPositionAirplane = [1.7, 3, 2.25].map(x => x * scale);
     // dualSDF
     // let cameraPosition = [1.7229492652657825, 1.4053401980124738, 2.120920557927234];
     // let scale = 0.7;
     // let cameraPosition = [1.3518370604886951, 1.821583023756495, 2.072730350363848].map(x => x * scale);
 
-    scale = 0.95;
-    let cameraPositionShoe = [-2.632886037151505, 1.5, 0.2].map(x => x * scale);
+    scale = 0.8;
+    let cameraPositionShoe = [2.632886037151505, 1.5, 1].map(x => x * scale);
 
     let cameraPosition = cameraPositionAirplane
     camera.position.set(... cameraPosition);
